@@ -1,10 +1,11 @@
 # WS2C - FXGL Games on Picade Console
+## Example Repo
 [![License](https://img.shields.io/github/license/FHNW-WS2C/Picade-Master)](https://github.com/FHNW-WS2C/Picade-Master/blob/master/LICENSE)
 
 
 ## Team
 
-* hier die Namen der Teammitglieder eintragen
+* Michael Job [michael.job@fhnw.ch]
 
 
 ## Voraussetzungen
