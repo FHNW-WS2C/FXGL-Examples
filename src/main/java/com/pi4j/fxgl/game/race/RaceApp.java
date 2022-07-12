@@ -9,6 +9,7 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsWorld;
+import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -39,7 +40,8 @@ public class RaceApp extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("level", startLevel);
         vars.put("lives", 3);
-        vars.put("score", 0);
+        vars.put("score", 0.0);
+        vars.put("speed", 0);
     }
 
     @Override
@@ -80,8 +82,14 @@ public class RaceApp extends GameApplication {
         Label scoreLabel = new Label();
         scoreLabel.setTextFill(Color.BLACK);
         scoreLabel.setFont(Font.font(20.0));
-        scoreLabel.textProperty().bind(FXGL.getip("score").asString("Score: %d"));
+        scoreLabel.textProperty().bind(FXGL.getdp("score").asString("Score: %.0f"));
         FXGL.addUINode(scoreLabel, 610, 100);
+
+        Label speedLabel = new Label();
+        speedLabel.setTextFill(Color.BLACK);
+        speedLabel.setFont(Font.font(20.0));
+        speedLabel.textProperty().bind(FXGL.getip("speed").asString("Speed: %d"));
+        FXGL.addUINode(speedLabel, 610, 130);
 
     }
 
@@ -94,7 +102,7 @@ public class RaceApp extends GameApplication {
             @Override
             protected void onCollisionBegin(Entity player, Entity wall) {
                 FXGL.play("race/crash.wav");
-                FXGL.inc("score", -100);
+                FXGL.inc("score", -50.0);
             }
         });
 

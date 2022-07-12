@@ -12,7 +12,6 @@ import static java.lang.Double.min;
 public class PlayerComponent extends Component {
 
     private PhysicsComponent physics;
-    private static double Speed = 0.0;
 
     private static float angularVelocity = 0.0F;
 
@@ -23,21 +22,20 @@ public class PlayerComponent extends Component {
         entity.getTransformComponent().setScaleOrigin(entity.getCenter());
     }
 
-    public void rotateLeft() {
+    public void left() {
         angularVelocity = (float) min(angularVelocity+0.2F, 2.0F);
         physics.getBody().setAngularVelocity(angularVelocity);
     }
 
-    public void rotateRight() {
+    public void right() {
         angularVelocity = (float) max(angularVelocity-0.2F, -2.0F);
         physics.getBody().setAngularVelocity(angularVelocity);
     }
 
     public void move() {
         Vec2 dir = Vec2.fromAngle(entity.getRotation() - 90)
-                .mulLocal(Speed);
-        FXGL.inc("score", 1);
-
+                .mulLocal(FXGL.getip("speed").doubleValue());
+        FXGL.set("score", FXGL.getdp("score").add(0.05).doubleValue());
 
         physics.setLinearVelocity(dir.x, dir.y);
 
@@ -46,18 +44,11 @@ public class PlayerComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-        if (Speed > 0.0) {
+        if (FXGL.getip("speed").doubleValue() > 0.0) {
             move();
-         //   FXGL.play("race/car.wav");
+            //TODO: loop car sound if moving
+            //FXGL.play("race/car.wav");   plays on each frame multiple times
         }
-    }
-
-    public void left() {
-        rotateLeft();
-    }
-
-    public void right() {
-        rotateRight();
     }
 
     public void straight() {
@@ -66,11 +57,20 @@ public class PlayerComponent extends Component {
     }
 
     public void up() {
-        Speed = min(Speed+10, 100.0);
+        FXGL.set("speed",
+                (int) Math.round(min(FXGL.getip("speed").add(10).doubleValue(), 100.0))
+        );
     }
 
     public void down() {
-        Speed = max(Speed-10, 0.0);
+        FXGL.set("speed",
+                (int) Math.round(max(FXGL.getip("speed").add(-10).doubleValue(), 0.0))
+        );
+        //FIXME: car still moves when speed reduced to 0
+        if(FXGL.getip("speed").doubleValue() < 9 && FXGL.getip("speed").doubleValue() > -15){
+            straight();
+            FXGL.set("speed", 0);
+        }
     }
 
     public void respawn() {
