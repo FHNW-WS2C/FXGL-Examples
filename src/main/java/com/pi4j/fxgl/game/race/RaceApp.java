@@ -10,6 +10,7 @@ import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsWorld;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -101,8 +102,19 @@ public class RaceApp extends GameApplication {
         physics.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.WALL) {
             @Override
             protected void onCollisionBegin(Entity player, Entity wall) {
-                FXGL.play("race/crash.wav");
-                FXGL.inc("score", -50.0);
+                Point2D collisionPoint;
+                double rotation = Math.floorMod((int) player.getRotation(), 360); //with % you get the remainder, thus can be negative!
+                if (rotation<=45 || rotation >=325) {
+                    collisionPoint = player.getPosition().add(5, 0);
+                } else if (rotation <135) { //rotation>45 && rotation <135
+                    collisionPoint = player.getPosition().add(10, 10);
+                } else if (rotation>225) { //rotation>225 && rotation <325
+                    collisionPoint = player.getPosition().add(-10, 0);
+                } else {
+                    collisionPoint = player.getPosition().add(-5, 20);
+                }
+                FXGL.inc("score", -25.0);
+                FXGL.spawn("dust", collisionPoint);
             }
         });
 
