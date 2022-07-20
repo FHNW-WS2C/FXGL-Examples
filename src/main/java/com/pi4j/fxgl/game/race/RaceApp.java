@@ -44,6 +44,7 @@ public class RaceApp extends GameApplication {
         vars.put("level", startLevel);
         vars.put("score", 0.0);
         vars.put("speed", 0);
+        vars.put("levelLabel", "Race: gain 50 points for Level 2");
     }
 
     @Override
@@ -80,6 +81,12 @@ public class RaceApp extends GameApplication {
 
     @Override
     protected void initUI() {
+
+        Label levelLabel = new Label();
+        levelLabel.setTextFill(Color.BLACK);
+        levelLabel.setFont(Font.font(20.0));
+        levelLabel.textProperty().bind(FXGL.getsp("levelLabel"));
+        FXGL.addUINode(levelLabel, 610, 50);
 
         Label scoreLabel = new Label();
         scoreLabel.setTextFill(Color.BLACK);
