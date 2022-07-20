@@ -5,6 +5,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import javafx.application.Platform;
 
 import static java.lang.Double.max;
 import static java.lang.Double.min;
@@ -33,12 +34,17 @@ public class PlayerComponent extends Component {
     }
 
     public void move() {
+        //move
         Vec2 dir = Vec2.fromAngle(entity.getRotation() - 90)
                 .mulLocal(FXGL.getip("speed").doubleValue());
-        FXGL.set("score", FXGL.getdp("score").add(0.05).doubleValue());
-
         physics.setLinearVelocity(dir.x, dir.y);
-
+        //Score
+        FXGL.set("score", FXGL.getdp("score").add(0.05).doubleValue());
+        if (FXGL.getd("score")>50.0 && FXGL.getd("score")<51.0){
+            System.out.println("score reached");
+            FXGL.set("level", 2);
+            Platform.runLater(RaceApp::initLevel);
+        }
     }
 
 
@@ -46,8 +52,8 @@ public class PlayerComponent extends Component {
     public void onUpdate(double tpf) {
         if (FXGL.getip("speed").doubleValue() > 0.0) {
             move();
-            //TODO: loop car sound if moving
-            //FXGL.play("race/car.wav");   plays on each frame multiple times
+        } else {
+            stop();
         }
     }
 
@@ -56,20 +62,28 @@ public class PlayerComponent extends Component {
         physics.getBody().setAngularVelocity(angularVelocity);
     }
 
+    public void stop() {
+        physics.setLinearVelocity(0, 0);
+    }
+
     public void up() {
+        if(FXGL.getip("speed").doubleValue() < 5){
+            FXGL.play("race/car.wav");
+        }
         FXGL.set("speed",
                 (int) Math.round(min(FXGL.getip("speed").add(10).doubleValue(), 100.0))
         );
     }
 
     public void down() {
+        if(FXGL.getip("speed").doubleValue() < 5){
+            FXGL.getAudioPlayer().stopAllSounds();
+        }
         FXGL.set("speed",
                 (int) Math.round(max(FXGL.getip("speed").add(-10).doubleValue(), 0.0))
         );
-        //FIXME: car still moves when speed reduced to 0
-        if(FXGL.getip("speed").doubleValue() < 9 && FXGL.getip("speed").doubleValue() > -15){
-            straight();
-            FXGL.set("speed", 0);
+        if(FXGL.getip("speed").doubleValue() < 5){
+            stop();
         }
     }
 

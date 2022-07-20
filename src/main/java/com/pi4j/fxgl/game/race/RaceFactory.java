@@ -17,13 +17,13 @@ import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGL.texture;
 
-@SuppressWarnings("unused")
 public class RaceFactory implements EntityFactory {
 
     @Spawns("Background")
@@ -62,6 +62,15 @@ public class RaceFactory implements EntityFactory {
                 .type(EntityType.WALL)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new PhysicsComponent())
+                .collidable()
+                .build();
+    }
+
+    @Spawns("Road")
+    public Entity spawnRoad(SpawnData data) {
+        return FXGL.entityBuilder(data)
+                .type(EntityType.ROAD)
+                .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .collidable()
                 .build();
     }

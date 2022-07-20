@@ -19,6 +19,8 @@ import javafx.scene.text.Font;
 import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
+import static java.lang.Double.min;
+import static java.lang.Math.max;
 
 public class RaceApp extends GameApplication {
 
@@ -40,7 +42,6 @@ public class RaceApp extends GameApplication {
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("level", startLevel);
-        vars.put("lives", 3);
         vars.put("score", 0.0);
         vars.put("speed", 0);
     }
@@ -51,27 +52,27 @@ public class RaceApp extends GameApplication {
         initLevel();
     }
 
-    private void initLevel() {
+    public static void initLevel() {
         FXGL.spawn("Background", new SpawnData(0, 0).put("width", WIDTH).put("height", HEIGHT));
         setLevelFromMapOrGameOver();
     }
 
-    private void setLevelFromMapOrGameOver() {
+    private static void setLevelFromMapOrGameOver() {
         try {
-            FXGL.setLevelFromMap("race/level" + FXGL.geti("level") + "-final.tmx");
+            FXGL.setLevelFromMap("race/level" + FXGL.geti("level") + ".tmx");
         } catch (IllegalArgumentException e) {
             gameOver(true);
         }
     }
 
-    private void gameOver(boolean reachedEndOfGame) {
+    private static void gameOver(boolean reachedEndOfGame) {
         StringBuilder builder = new StringBuilder();
         builder.append("Game Over!\n\n");
         if (reachedEndOfGame) {
             builder.append("You have reached the end of the game!\n\n");
         }
         builder.append("Final score: ")
-                .append(FXGL.geti("score"))
+                .append(FXGL.getd("score"))
                 .append("\nFinal level: ")
                 .append(FXGL.geti("level"));
         FXGL.getDialogService().showMessageBox(builder.toString(), () -> FXGL.getGameController().gotoMainMenu());
@@ -98,6 +99,24 @@ public class RaceApp extends GameApplication {
     protected void initPhysics() {
         PhysicsWorld physics = FXGL.getPhysicsWorld();
         physics.setGravity(0, 0);
+
+        physics.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.ROAD) {
+
+            @Override
+            protected void onCollisionBegin(Entity player, Entity road) {
+                FXGL.set("speed",
+                        (int) Math.round(min(FXGL.getip("speed").add(30).doubleValue(), 100.0))
+                );
+            }
+
+            @Override
+            protected void onCollisionEnd(Entity player, Entity road) {
+                FXGL.set("speed",
+                        (int) Math.round(max(FXGL.getip("speed").add(-30).doubleValue(), 0.0))
+                );
+            }
+        });
+
 
         physics.addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.WALL) {
             @Override
