@@ -40,7 +40,7 @@ public class PlayerComponent extends Component {
         physics.setLinearVelocity(dir.x, dir.y);
         //Score
         FXGL.set("score", FXGL.getdp("score").add(0.05).doubleValue());
-        if (FXGL.getd("score")>50.0 && FXGL.geti("level")==1){
+        if (FXGL.getd("score")>150.0 && FXGL.geti("level")==1){
             FXGL.set("level", 2);
             FXGL.set("levelLabel", "Level 2 reached: drive faster on the road");
             Platform.runLater(RaceApp::initLevel);

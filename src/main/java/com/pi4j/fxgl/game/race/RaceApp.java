@@ -44,7 +44,7 @@ public class RaceApp extends GameApplication {
         vars.put("level", startLevel);
         vars.put("score", 0.0);
         vars.put("speed", 0);
-        vars.put("levelLabel", "Race: gain 50 points for Level 2");
+        vars.put("levelLabel", "Race: gain 150 points for Level 2");
     }
 
     @Override
