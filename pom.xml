@@ -33,7 +33,7 @@
         <pi.deploydirectory>/home/pi/deploy</pi.deploydirectory>
 
         <!-- Java Compiler Version -->
-        <java.version>11</java.version>
+        <java.version>17</java.version>
 
         <!-- Project Dependency Versions-->
         <fxgl.version>dev-SNAPSHOT</fxgl.version>
