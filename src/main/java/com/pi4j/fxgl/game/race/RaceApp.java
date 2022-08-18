@@ -9,7 +9,7 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsWorld;
-import javafx.beans.binding.Bindings;
+import com.pi4j.fxgl.util.ArcadeConsoles;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -24,8 +24,8 @@ import static java.lang.Math.max;
 
 public class RaceApp extends GameApplication {
 
-    private static final int HEIGHT = 640;
-    private static final int WIDTH = 960;
+    private static final int HEIGHT = ArcadeConsoles.PICADE.getHeight();
+    private static final int WIDTH = ArcadeConsoles.PICADE.getWidth();
 
     private static int startLevel = 1;
 
@@ -35,7 +35,7 @@ public class RaceApp extends GameApplication {
         settings.setWidth(WIDTH);
         settings.setHeight(HEIGHT);
         settings.setTitle("Race");
-        settings.setVersion("chapter 1");
+        settings.setVersion("0.3");
         settings.setMainMenuEnabled(true);
     }
 
@@ -86,19 +86,19 @@ public class RaceApp extends GameApplication {
         levelLabel.setTextFill(Color.BLACK);
         levelLabel.setFont(Font.font(20.0));
         levelLabel.textProperty().bind(FXGL.getsp("levelLabel"));
-        FXGL.addUINode(levelLabel, 610, 50);
+        FXGL.addUINode(levelLabel, 100, 25);
 
         Label scoreLabel = new Label();
         scoreLabel.setTextFill(Color.BLACK);
         scoreLabel.setFont(Font.font(20.0));
         scoreLabel.textProperty().bind(FXGL.getdp("score").asString("Score: %.0f"));
-        FXGL.addUINode(scoreLabel, 610, 100);
+        FXGL.addUINode(scoreLabel, 600, 25);
 
         Label speedLabel = new Label();
         speedLabel.setTextFill(Color.BLACK);
         speedLabel.setFont(Font.font(20.0));
         speedLabel.textProperty().bind(FXGL.getip("speed").asString("Speed: %d"));
-        FXGL.addUINode(speedLabel, 610, 130);
+        FXGL.addUINode(speedLabel, 800, 25);
 
     }
 
@@ -149,12 +149,52 @@ public class RaceApp extends GameApplication {
     @Override
     protected void initInput() {
         Input input = getInput();
-        input.addAction(turnLeft, KeyCode.A);
-        input.addAction(turnRight, KeyCode.D);
+        //for keyboard
+        // input.addAction(turnLeft, KeyCode.A);
+        // input.addAction(turnRight, KeyCode.D);
+        // FXGL.onKeyDown(KeyCode.W, "Speed Up",    () -> getPlayer().getComponent(PlayerComponent.class).up());
+        // FXGL.onKeyDown(KeyCode.S, "Slow Down",  () -> getPlayer().getComponent(PlayerComponent.class).down());
 
-        FXGL.onKeyDown(KeyCode.W, "Speed Up",    () -> getPlayer().getComponent(PlayerComponent.class).up());
-        FXGL.onKeyDown(KeyCode.S, "Slow Down",  () -> getPlayer().getComponent(PlayerComponent.class).down());
+        //for Picade
+        input.addAction(turnLeft, KeyCode.LEFT);
+        input.addAction(turnRight, KeyCode.RIGHT);
+        input.addAction(speedUp, KeyCode.UP);
+        input.addAction(speedDown, KeyCode.DOWN);
     }
+
+    UserAction speedUp = new UserAction("speedUp") {
+        @Override
+        protected void onActionBegin() {
+            getPlayer().getComponent(PlayerComponent.class).up();
+        }
+
+        @Override
+        protected void onAction() {
+            getPlayer().getComponent(PlayerComponent.class).straight();
+        }
+
+        @Override
+        protected void onActionEnd() {
+            //nop
+        }
+    };
+
+    UserAction speedDown = new UserAction("speedDown") {
+        @Override
+        protected void onActionBegin() {
+            getPlayer().getComponent(PlayerComponent.class).down();
+        }
+
+        @Override
+        protected void onAction() {
+            getPlayer().getComponent(PlayerComponent.class).straight();
+        }
+
+        @Override
+        protected void onActionEnd() {
+            //nop
+        }
+    };
 
     UserAction turnLeft = new UserAction("turnLeft") {
         @Override
